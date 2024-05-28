@@ -8,7 +8,7 @@ COMPFLAGS=
 EXEC = pcfloop
 
 # Fichiers compilés, à produire pour fabriquer l'exécutable
-SOURCES = pcfast.ml pcfloop.ml
+SOURCES = pcfast.ml pcfsem.ml pcfloop.ml
 GENERATED = pcflex.ml pcfparse.ml pcfparse.mli
 MLIS =
 OBJS = $(GENERATED:.ml=.cmo) $(SOURCES:.ml=.cmo)

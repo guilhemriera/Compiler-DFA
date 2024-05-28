@@ -82,23 +82,31 @@ rule lex = parse
            courante. *)
         incr_line_number lexbuf ;
         lex lexbuf }
-  | [ 'A'-'Z' 'a'-'z' '0'-'9']+ as lxm
+  | ['0'-'9']+ as lxm
+      { INT(int_of_string lxm) }
+  | [ 'A'-'Z' 'a'-'z' ] [ 'A'-'Z' 'a'-'z' ]* as lxm
       { match lxm with
-        "letter" -> LETTER
+          "automaton" -> AUTOMATON
+        | "letter" -> LETTER
         | "state" -> STATE
-        | "transition" | "tran" | "trans" -> TRANSITION
-        | "init" | "initial" -> INIT
+        | "init" -> INIT
         | "final" -> FINAL
+        | "transition" -> TRANSITION
         | _ -> IDENT(lxm) }
-  | ";"   { SEMI }
   | ";;"   { SEMISEMI }
-  | "-"    { BACKARROW }
+  | ";"    { SEMI }
+  | "="   { EQUAL }
+  | "-"   { BACKARROW }
   | "->"  { FRONTARROW }
   | '('   { LPAR }
   | ')'   { RPAR }
-  (* | '"'   { reset_string_buffer();
+  | '{'   { LCURLBRAC }
+  | '}'   { RCURLBRAC }
+  | '['   { LSQUARBRAC }
+  | ']'   { RSQUARBRAC }
+  | '"'   { reset_string_buffer();
             in_string lexbuf;
-            STRING (get_stored_string()) } *)
+            STRING (get_stored_string()) }
   | "//"  { in_cpp_comment lexbuf }
   | "/*"  { in_c_comment lexbuf }
   | eof   { raise Eoi }

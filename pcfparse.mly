@@ -1,52 +1,85 @@
 %{
   open Pcfast;;
 
-  (*let rec body params expr = match params with
-  | [] -> expr
-  | p :: prms -> Fun(p, body prms expr)
-  ;;*)
 %}
 
-%token <string> TYPE_LETTER
-%token <string * bool * bool> TYPE_STATE
-%token <(string * bool * bool) * string * (string * bool * bool)> TYPE_TRANSITION
+%token <int> INT
 %token <string> IDENT
-%token LPAR RPAR SEMISEMI
-%token LETTER STATE INIT FINAL TRANSITION BACKARROW FRONTARROW SEMI
+%token <string> STRING
+%token AUTOMATON LETTER STATE INIT FINAL TRANSITION
+%token LPAR RPAR LCURLBRAC RCURLBRAC LSQUARBRAC RSQUARBRAC SEMISEMI SEMI
+%token EQUAL BACKARROW FRONTARROW
+%left EQUAL
+
 
 %start main
-%type <Pcfast.expr> main
+%type <Pcfast.automaton> main
 
 %%
 
-main: expr SEMISEMI { $1 } /* peut-etre a jetter (pas sur de voir l'intéret d'un évaluation intermédière dans mon code) */
+main: automaton SEMISEMI { $1 }
+    | SEMISEMI main { $2 }
 ;
 
-expr:
-  LETTER TYPE_LETTER seqident SEMI expr                 { Letter($2, $5) }                    
-  /* prototipe chaine { 
-    match $3 with
-    | [] -> Letter($2)
-    | lst -> 
-      let letters = List.map (fun id -> Letter(id)) lst in
-      List.fold_right (fun l acc -> Seq(l, acc)) letters (Letter($2))
-  }*/
-| STATE IDENT seqident SEMI expr                  { State(($2, false, false), $5) }
-| STATE IDENT seqident INIT SEMI expr             { State(($2, true, false), $6) }
-| STATE IDENT seqident FINAL SEMI expr            { State(($2, false, true), $6) }
-| STATE IDENT seqident INIT FINAL SEMI expr       { State(($2, true, true), $7) }
-| TRANSITION IDENT BACKARROW IDENT FRONTARROW IDENT SEMI expr { Transition(($2, $4, $6), $8) }
+
+automaton:
+| AUTOMATON LCURLBRAC letters states initial final transitions RCURLBRAC file
+    {
+      {
+        letters = $3;
+        states = $4;
+        initial = $5;
+        final = $6;
+        transitions = $7;
+        file = $9;
+      
+      }
+     }
 ;
 
-atom:
-  TYPE_LETTER         { LetterType($1) }
-| TYPE_STATE          { StateType($1) }
-| TYPE_TRANSITION     { TransitionType($1) } 
-| IDENT               { Ident($1) }
-| LPAR expr RPAR { $2 }
+letters:
+  LETTER EQUAL LSQUARBRAC RSQUARBRAC SEMI { [] }
+| LETTER EQUAL LSQUARBRAC listing RSQUARBRAC SEMI { $4 }
 ;
 
-seqident:
-  IDENT seqident  { $1 :: $2 }
-| /* rien */      { [ ] }
+states:
+  STATE EQUAL LSQUARBRAC RSQUARBRAC SEMI { [] }
+| STATE EQUAL LSQUARBRAC listing RSQUARBRAC SEMI { $4 }
 ;
+
+initial:
+  INIT EQUAL IDENT SEMI { $3 }
+;
+
+final:
+  FINAL EQUAL LSQUARBRAC RSQUARBRAC SEMI { [] }
+| FINAL EQUAL LSQUARBRAC listing RSQUARBRAC SEMI { $4 }
+;
+
+listing:
+ IDENT { [$1] }
+| listing IDENT { $1 @ [$2] }
+;
+
+transitions:
+  TRANSITION EQUAL LSQUARBRAC RSQUARBRAC SEMI { [] }
+| TRANSITION EQUAL LSQUARBRAC transition_list RSQUARBRAC SEMI { $4 }
+;
+
+transition_list:
+  transition { [$1] }
+| transition_list transition { $1 @ [$2] }
+;
+
+transition:
+  LPAR IDENT BACKARROW IDENT FRONTARROW IDENT RPAR { 
+    {
+      state_start = $2;
+      letter = $4;
+      state_end = $6;
+    }
+  }
+;
+
+file:
+  IDENT { $1 }
