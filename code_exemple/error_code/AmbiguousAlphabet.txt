@@ -1,0 +1,12 @@
+automaton {
+    letter = [ab a b];
+    state = [b];
+    init = b;
+    final = [b];
+    transition = [
+        //(A - ab -> A)
+        (b - a -> b)
+        (b - ab -> b)
+    ];
+} AmbiguousAlphabet
+;;

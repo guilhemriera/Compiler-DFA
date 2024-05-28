@@ -1,0 +1,25 @@
+automaton {
+    letter = [b a];
+    state = [A B];
+    init = A;
+    final = [A];
+    transition = [
+        (A - a -> B)
+        (B - a -> A)
+        (B - b -> B)
+        (A - b -> A)
+    ];
+} automateNbAPair
+;;
+
+automaton {
+    letter = [b a];
+    state = [A B];
+    init = A;
+    final = [A];
+    transition = [
+        (A - a -> B)
+        (B - a -> A)
+    ];
+} automateNbAPairReduce
+    ;;

@@ -23,20 +23,8 @@ let get_transitions state transitions =
   transitions
   |> List.filter (fun t -> t.state_start = state)
   |> List.map (fun t -> (t.letter, t.state_end))
+;;
 
-  let transitions = [
-    {state_start = "q0"; letter = "a"; state_end = "q1"};
-    {state_start = "q1"; letter = "b"; state_end = "q2"};
-    {state_start = "q2"; letter = "c"; state_end = "q0"};
-    {state_start = "q0"; letter = "d"; state_end = "q2"}
-  ]
-
-  let () =
-    let state = "q0" in
-    let result = get_transitions state transitions in
-    List.iter (fun (letter, state_end) -> Printf.printf "(%s, %s); " letter state_end) result
-
-    
     open Printf;; 
 
 let print_letter oc letter = 
@@ -55,7 +43,7 @@ let print_state oc state =
 let rec print_states oc = function
   | [] -> Printf.fprintf oc ""
   | state::[] -> Printf.fprintf oc "%a" print_state state
-  | state::r -> Printf.fprintf oc "%a , %a" print_state state print_states r
+  | state::r -> Printf.fprintf oc "%a %a" print_state state print_states r
 ;;
 
 let rec print_letters oc = function

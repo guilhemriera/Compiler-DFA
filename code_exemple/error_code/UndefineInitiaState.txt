@@ -1,0 +1,11 @@
+automaton {
+    letter = [ab a];
+    state = [A b];
+    init = K;
+    final = [b];
+    transition = [
+        (A - a -> b)
+        (b - ab -> b)
+    ];
+} UndefineInitiaState
+;;

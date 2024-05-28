@@ -1,0 +1,13 @@
+automaton {
+    letter = [ab a];
+    state = [A b c d];
+    init = A;
+    final = [b];
+    transition = [
+        (A - a -> d)
+        (d - ab -> c)
+        (b - ab -> b)
+        (b - a -> A)
+    ];
+} unreacheableState
+;;

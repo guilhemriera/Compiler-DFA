@@ -1,0 +1,11 @@
+automaton {
+    letter = [ab a];
+    state = [b];
+    init = b;
+    final = [b b];
+    transition = [
+        (b - a -> b)
+        (b - ab -> b)
+    ];
+} DuplicateFinal
+;;
